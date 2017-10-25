@@ -4,13 +4,13 @@ CBMicroBit is a C++ wrapper around CoreBluetooth to easily connect a BBC Micro:B
 
 On starting, the program will search the Micro:bit, connect and then subscribe to the Accelerometer and Button services. 
 
-# To Run
+## To Run
 
 Simply open and run the XCode project (MicroBit.xcodeproj). 
 
 Alternatively, run the unix execitable CBMicroBit (./CBMicroBit) from the terminal. 
 
-# OSC Output
+## OSC Output
 
 The program outputs to localhost:9109 by default. The output port can be set using the first argument of the program
 
@@ -39,16 +39,21 @@ The ouputs are currently
   2 = longpress
   
 
-# The Micro:Bit
+## The Micro:Bit
 We've included a hex file (CBMicrobit.hex) that can just be dragged onto the MicroBit. All it does it advertise the accelerometer, button, thermometer, LED and IO Pin services. 
 
 Important changes to remember to make to the MicrobitConfig.h file if you are building your own project with C++ is setting MICROBIT_BLE_OPEN to 1 (this disables pairing) and MICROBIT_SD_GATT_TABLE_SIZE to its maximum, which is  0x700. If this is not done then the services will not appear.  
 
-# Contributions
+## Trouble shooting
+
+### My Micro:bit isn't connecting
+  Is it connected to another computer or already connected to your computer? The Micro:Bit will only connect to one Central and the program requires it to not be connected to anything when it runs (even your own computer ). You can check whether you are already connected to the Micro:Bit by clicking on the Bluetooth icon in your toolbar. If you are already connected, disconnect. The program should then pick it up again without needing to restart. 
+
+## Contributions
 
 We use the excellent [OscpPk](http://gruntthepeon.free.fr/oscpkt/) library to output OSC 
 
-# License
+## License
 
 This software is distributed under the MIT Licence
 
