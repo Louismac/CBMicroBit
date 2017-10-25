@@ -191,7 +191,7 @@ struct UdpSocket {
       incoming data on the specified port, using the function receiveNextDatagram.
   */
   bool bindTo(int port, int options = OPTION_DEFAULT) {
-    return openSocket("", port, options);
+    return openSocket("localhost", port, options);
   }
 
   /** open the socket, and prepare for sending datagrams to the specified host:port */

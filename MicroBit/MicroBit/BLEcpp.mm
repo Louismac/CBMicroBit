@@ -22,7 +22,7 @@ struct BLEImpl
 BLEcpp::BLEcpp(int port):
 impl(new BLEImpl)
 {
-    portNum = port;
+    sendPort = port;
     impl->wrapped = [[BLEBridge alloc] initWithDataCallback:^(NSArray *data){
         std::string service = [data[0] UTF8String];
         if(service == "accelerometer")
@@ -58,7 +58,7 @@ BLEcpp::~BLEcpp()
 void BLEcpp::sendButtonData(bool buttonA, int state)
 {
     UdpSocket sock;
-    sock.connectTo("localhost", portNum);
+    sock.connectTo("localhost", sendPort);
     Message msg(buttonA ? "buttonA":"buttonB");
     msg.pushInt32(state);
     PacketWriter pw;
@@ -74,7 +74,7 @@ void BLEcpp::sendButtonData(bool buttonA, int state)
 void BLEcpp::sendAccData(int data[3])
 {
     UdpSocket sock;
-    sock.connectTo("localhost", portNum);
+    sock.connectTo("localhost", sendPort);
     Message msg("/acc");
     msg.pushInt32(data[0]);
     msg.pushInt32(data[1]);
@@ -88,4 +88,32 @@ void BLEcpp::sendAccData(int data[3])
     }
     sock.close();
 }
+
+/*
+void BLEcpp::runServer() {
+    UdpSocket sock;
+    sock.bindTo(receivePort);
+    if (!sock.isOk()) {
+        std::cout << "Error opening port " << receivePort << ": " << sock.errorMessage() << std::endl;
+    } else {
+        std::cout << "Server started, will listen to packets on port " << receivePort << std::endl;
+        PacketReader pr;
+        PacketWriter pw;
+        while (sock.isOk()) {
+            if (sock.receiveNextPacket(30)) {
+                pr.init(sock.packetData(), sock.packetSize());
+                oscpkt::Message *msg;
+                while (pr.isOk() && (msg = pr.popMessage()) != 0) {
+                    int iarg;
+                    if (msg->match("/LED").popInt32(iarg).isOkNoMoreArgs()) {
+                        std::cout << "Server: received /LED " << iarg << " from " << sock.packetOrigin() << "\n";
+                    } else {
+                        std::cout << "Server: unhandled message: " << "\n";
+                    }
+                }
+            }
+        }
+    }
+}
+*/
 
