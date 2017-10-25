@@ -45,6 +45,9 @@
 @property (nonatomic) BLEBlock onConnection;
 @property (nonatomic) BLEBlock onFindingMicrobit;
 
+@property (nonatomic, assign) NSUInteger prevButtonA;
+@property (nonatomic, assign) NSUInteger prevButtonB;
+
 @end
 
 @implementation BLEBridge
@@ -62,6 +65,8 @@
         self.connected = NO;
         self.foundMicroBit = NO;
         self.poweredOn = NO;
+        self.prevButtonA = 3;
+        self.prevButtonB = 3;
         @autoreleasepool
         {
             self.onData = dataCallback;
@@ -244,10 +249,27 @@
         NSData *data = characteristic.value;
         const uint8_t *bytes = (const uint8_t *)[data bytes]; 
         int state = bytes[0];
-        std::cout << "state:" << state << std::endl;
-        NSString *tag = [characteristic.UUID.UUIDString isEqualToString:BUTTONA_CHARACTERISTIC_UUID] ? @"buttonA":@"buttonB";
-        if(self.onData)
+       
+        BOOL buttonA = [characteristic.UUID.UUIDString isEqualToString:BUTTONA_CHARACTERISTIC_UUID];
+        BOOL send;
+        NSString *tag;
+        
+        if(buttonA)
         {
+            tag = @"buttonA";
+            send = state != self.prevButtonA;
+            self.prevButtonA = state;
+        }
+        else
+        {
+            tag = @"buttonB";
+            send = state != self.prevButtonB;
+            self.prevButtonB = state;
+        }
+        
+        if(self.onData && send)
+        {
+            std::cout << "state:" << state << std::endl;
             self.onData(@[tag,@(state)]);
         }
     }
