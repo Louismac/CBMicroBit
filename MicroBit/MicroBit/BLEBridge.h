@@ -10,15 +10,18 @@
 
 @interface BLEBridge : NSObject
 
-- (void) startScan;
-- (NSArray *) peripherals;
 typedef void(^BLEBlock)(void);
 typedef void(^BLEIntBlock)(int);
-- (instancetype) initWithCallback:(BLEIntBlock) callback;
-@property (nonatomic) BLEIntBlock onXData;
-@property (nonatomic) BLEBlock onPoweringOn;
-@property (nonatomic) BLEBlock onConnection;
-@property (nonatomic) BLEBlock onFindingMicrobit;
+typedef void(^BLEArrayBlock)(NSArray *);
+
+- (instancetype) initWithDataCallback:(BLEArrayBlock) dataCallback
+                    discoveryCallBack:(BLEBlock) discoveryCallback
+                andConnectionCallback:(BLEBlock) connectionCallback;
+
+- (void) startScan;
+- (NSArray *) peripherals;
+- (void) cleanUp;
+
 @property (nonatomic, assign) BOOL connecting;
 @property (nonatomic, assign) BOOL connected;
 @property (nonatomic, assign) BOOL poweredOn;

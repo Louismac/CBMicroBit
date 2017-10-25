@@ -8,9 +8,17 @@
 
 #include "BLEcpp.h"
 #include <thread>
+#include <sstream>
+#include <iostream>
 
 int main(int argc, const char * argv[])
 {
-    BLEcpp obj;
+    int port = 9109;
+    if(argc == 2)
+    {
+        std::stringstream ss(argv[1]);
+        ss >> port;
+    }
+    BLEcpp obj(port);
     return 0;
 }

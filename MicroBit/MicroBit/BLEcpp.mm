@@ -13,32 +13,48 @@
 #include "oscpkt.hh"
 #include "udp.hh"
 using namespace oscpkt;
-const int PORT_NUM = 9109;
-
 
 struct BLEImpl
 {
     BLEBridge *wrapped;
 };
 
-BLEcpp::BLEcpp():
+BLEcpp::BLEcpp(int port):
 impl(new BLEImpl)
 {
-    impl->wrapped = [[BLEBridge alloc] initWithCallback:^(int x){
-        std::cout << "x:" << x << std::endl;
-        sendX(x);
+    portNum = port;
+    impl->wrapped = [[BLEBridge alloc] initWithDataCallback:^(NSArray *accData){
+        int data[3] = {[accData[0] intValue],[accData[1] intValue],[accData[2] intValue]};
+        sendAccData(data);
+    } discoveryCallBack:^{
+        std::cout << "did Find Micro:bit" << std::endl;
+    } andConnectionCallback:^{
+        std::cout << "did Connect To Micro:bit" << std::endl;
     }];
 }
 
-void BLEcpp::sendX(int x)
+BLEcpp::~BLEcpp()
+{
+    if (impl)
+        [impl->wrapped cleanUp];
+    delete impl;
+}
+
+void BLEcpp::sendAccData(int data[3])
 {
     UdpSocket sock;
-    sock.connectTo("localhost", PORT_NUM);
-    Message msg("/x");
-    msg.pushInt32(x);
+    sock.connectTo("localhost", portNum);
+    Message msg("/acc");
+    msg.pushInt32(data[0]);
+    msg.pushInt32(data[1]);
+    msg.pushInt32(data[2]);
     PacketWriter pw;
     pw.startBundle().startBundle().addMessage(msg).endBundle().endBundle();
     bool ok = sock.sendPacket(pw.packetData(), pw.packetSize());
+    if(!ok)
+    {
+        std::cout << "osc failed to send" << std::endl;
+    }
     sock.close();
 }
 

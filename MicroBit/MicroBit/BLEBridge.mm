@@ -18,11 +18,19 @@
 @property (nonatomic, strong) CBCentralManager *manager;
 @property (nonatomic, strong) CBPeripheral *peripheral;
 @property (nonatomic, strong) NSArray *peripherals;
+
+@property (nonatomic) BLEArrayBlock onAccData;
+@property (nonatomic) BLEBlock onPoweringOn;
+@property (nonatomic) BLEBlock onConnection;
+@property (nonatomic) BLEBlock onFindingMicrobit;
+
 @end
 
 @implementation BLEBridge
 
-- (instancetype) initWithCallback:(BLEIntBlock) callback
+- (instancetype) initWithDataCallback:(BLEArrayBlock) dataCallback
+                    discoveryCallBack:(BLEBlock) discoveryCallback
+                andConnectionCallback:(BLEBlock) connectionCallback
 {
     self = [super init];
     if(self)
@@ -35,7 +43,9 @@
         self.poweredOn = NO;
         @autoreleasepool
         {
-            self.onXData = callback;
+            self.onAccData = dataCallback;
+            self.onFindingMicrobit = discoveryCallback;
+            self.onConnection = connectionCallback;
             dispatch_queue_t q = dispatch_get_main_queue();
             dispatch_async(q, ^{
                 std::cout << "making manager" << std::endl;
@@ -49,6 +59,20 @@
         };
     }
     return self;
+}
+
+- (void) cleanUp
+{
+    [self.manager stopScan];
+    
+    if(self.peripheral)
+    {
+        [self.manager cancelPeripheralConnection:self.peripheral];
+        self.peripheral = nil;
+    }
+    
+    self.manager.delegate = nil;
+    self.manager = nil;
 }
 
 - (void) startScan
@@ -72,6 +96,10 @@
             const char * name = [[aPeripheral name] UTF8String];
             std::cout << "didDiscoverPeripheral, connecting "<< name << std::endl;
             self.foundMicroBit = YES;
+            if(self.onFindingMicrobit)
+            {
+                self.onFindingMicrobit();
+            }
             self.peripheral = aPeripheral;
             [self.manager connectPeripheral:self.peripheral options:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:CBConnectPeripheralOptionNotifyOnDisconnectionKey]];
         }
@@ -103,6 +131,10 @@
 {
     self.connecting = NO;
     self.connected = YES;
+    if(self.onConnection)
+    {
+        self.onConnection();
+    }
     std::cout << "didConnectPeripheral" << std::endl;
     [aPeripheral setDelegate:self];
     [aPeripheral discoverServices:nil];
@@ -157,9 +189,9 @@
     y = CFSwapInt16LittleToHost(*(int16_t *)(&reportData[1]));
     z = CFSwapInt16LittleToHost(*(int16_t *)(&reportData[2]));
     
-    if(self.onXData)
+    if(self.onAccData)
     {
-        self.onXData(x);
+        self.onAccData(@[@(x),@(y),@(z)]);
     }
     
 //    F53OSCMessage *message =

@@ -14,7 +14,10 @@ struct BLEImpl;
 class BLEcpp
 {
 public:
-    BLEcpp();
+    BLEcpp(int port);
+    ~BLEcpp();
     BLEImpl* impl;
-    void sendX(int x);
+    void sendAccData(int data[3]);
+private:
+    int portNum;
 };
