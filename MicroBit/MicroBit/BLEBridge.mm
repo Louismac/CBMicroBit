@@ -11,6 +11,27 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #include <iostream>
 
+#define MICROBIT_NAME @"BBC micro:bit"
+
+/*Full Bluetooth profile at
+ https://lancaster-university.github.io/microbit-docs/resources/bluetooth/bluetooth_profile.html
+ */
+
+#define ACCELEROMETER_CHARACTERISTIC_UUID @"E95DCA4B-251D-470A-A062-FA1922DFA9A8"
+#define ACCELEROMETER_SERVICE_UUID @"E95D0753-251D-470A-A062-FA1922DFA9A8"
+#define BUTTON_SERVICE_UUID @"E95D9882-251D-470A-A062-FA1922DFA9A8"
+#define BUTTONA_CHARACTERISTIC_UUID @"E95DDA90-251D-470A-A062-FA1922DFA9A8"
+#define BUTTONB_CHARACTERISTIC_UUID @"E95DDA91-251D-470A-A062-FA1922DFA9A8"
+#define IO_SERVICE_UUID @"E95D127B-251D-470A-A062-FA1922DFA9A8"
+#define IODATA_CHARACTERSTIC_UUID @"E95D8D00-251D-470A-A062-FA1922DFA9A8"
+#define LED_SERVICE_UUID @"E95DD91D-251D-470A-A062-FA1922DFA9A8"
+#define LEDTEXT_CHARACTERISTIC_UUID @"E95D93EE-251D-470A-A062-FA1922DFA9A8"
+
+#define ACCELEROMETER YES
+#define BUTTON YES
+#define LED NO
+#define IO NO
+
 @class CBCentralManager;
 
 @interface BLEBridge()<CBCentralManagerDelegate, CBPeripheralDelegate>
@@ -19,7 +40,7 @@
 @property (nonatomic, strong) CBPeripheral *peripheral;
 @property (nonatomic, strong) NSArray *peripherals;
 
-@property (nonatomic) BLEArrayBlock onAccData;
+@property (nonatomic) BLEArrayBlock onData;
 @property (nonatomic) BLEBlock onPoweringOn;
 @property (nonatomic) BLEBlock onConnection;
 @property (nonatomic) BLEBlock onFindingMicrobit;
@@ -43,7 +64,7 @@
         self.poweredOn = NO;
         @autoreleasepool
         {
-            self.onAccData = dataCallback;
+            self.onData = dataCallback;
             self.onFindingMicrobit = discoveryCallback;
             self.onConnection = connectionCallback;
             dispatch_queue_t q = dispatch_get_main_queue();
@@ -98,7 +119,7 @@
 {
     if([aPeripheral name])
     {
-        BOOL isMicrobit = [[aPeripheral name] rangeOfString:@"BBC micro:bit"].location != NSNotFound;
+        BOOL isMicrobit = [[aPeripheral name] rangeOfString:MICROBIT_NAME].location != NSNotFound;
 
         if(isMicrobit && !self.connecting && !self.connected)
         {
@@ -126,14 +147,6 @@
 {
     NSLog(@"Retrieved peripheral: %lu - %@", [peripherals count], peripherals);
     NSMutableArray *p = [NSMutableArray new];
-    for(CBPeripheral * peripheral in peripherals)
-    {
-        if([peripheral.name isEqualToString:@"Micro:bit"])
-        {
-            [self.manager connectPeripheral:peripheral options:nil];
-        }
-        [p addObject:peripheral.name];
-    }
     self.peripherals = [NSArray arrayWithArray:p];
 }
 
@@ -170,8 +183,22 @@
     {
         std::cout <<"Service found with UUID: " << [[aService.UUID UUIDString] UTF8String] << std::endl;
         
-        [aPeripheral discoverCharacteristics:nil forService:aService];
-        
+        if([[aService.UUID UUIDString] isEqualToString:ACCELEROMETER_SERVICE_UUID] && ACCELEROMETER)
+        {
+            [aPeripheral discoverCharacteristics:@[[CBUUID UUIDWithString:ACCELEROMETER_CHARACTERISTIC_UUID]] forService:aService];
+        }
+        if([[aService.UUID UUIDString] isEqualToString:BUTTON_SERVICE_UUID] && BUTTON)
+        {
+            [aPeripheral discoverCharacteristics:@[[CBUUID UUIDWithString:BUTTONA_CHARACTERISTIC_UUID],[CBUUID UUIDWithString:BUTTONB_CHARACTERISTIC_UUID]] forService:aService];
+        }
+        if([[aService.UUID UUIDString] isEqualToString:LED_SERVICE_UUID] && LED)
+        {
+            [aPeripheral discoverCharacteristics:@[[CBUUID UUIDWithString:LEDTEXT_CHARACTERISTIC_UUID]] forService:aService];
+        }
+        if([[aService.UUID UUIDString] isEqualToString:IO_SERVICE_UUID] && IO)
+        {
+            [aPeripheral discoverCharacteristics:@[[CBUUID UUIDWithString:IODATA_CHARACTERSTIC_UUID]] forService:aService];
+        }
     }
 }
 
@@ -181,7 +208,9 @@
     for (CBCharacteristic *aChar in service.characteristics)
     {
         std::cout <<"Characteristic: " << [[aChar.UUID UUIDString] UTF8String] << std::endl;
-        if([aChar.UUID.UUIDString isEqualToString:@"E95DCA4B-251D-470A-A062-FA1922DFA9A8"])
+        if([aChar.UUID.UUIDString isEqualToString:ACCELEROMETER_CHARACTERISTIC_UUID]
+           || [aChar.UUID.UUIDString isEqualToString:BUTTONA_CHARACTERISTIC_UUID]
+           || [aChar.UUID.UUIDString isEqualToString:BUTTONB_CHARACTERISTIC_UUID])
         {
             [aPeripheral setNotifyValue:YES forCharacteristic:aChar];
         }
@@ -190,21 +219,39 @@
 
 - (void) peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
-    [peripheral readValueForCharacteristic:characteristic];
-    NSData *data = characteristic.value;
-    const uint8_t *reportData = (const uint8_t *)[data bytes];
-    int16_t x = 0;
-    int16_t y = 0;
-    int16_t z = 0;
-    
-    x = CFSwapInt16LittleToHost(*(int16_t *)(&reportData[0]));
-    y = CFSwapInt16LittleToHost(*(int16_t *)(&reportData[1]));
-    z = CFSwapInt16LittleToHost(*(int16_t *)(&reportData[2]));
-    
-    if(self.onAccData)
+    if([characteristic.UUID.UUIDString isEqualToString:ACCELEROMETER_CHARACTERISTIC_UUID])
     {
-        self.onAccData(@[@(x),@(y),@(z)]);
+        [peripheral readValueForCharacteristic:characteristic];
+        NSData *data = characteristic.value;
+        const uint8_t *reportData = (const uint8_t *)[data bytes];
+        int16_t x = 0;
+        int16_t y = 0;
+        int16_t z = 0;
+        
+        x = CFSwapInt16LittleToHost(*(int16_t *)(&reportData[0]));
+        y = CFSwapInt16LittleToHost(*(int16_t *)(&reportData[1]));
+        z = CFSwapInt16LittleToHost(*(int16_t *)(&reportData[2]));
+        
+        if(self.onData)
+        {
+            self.onData(@[@"accelerometer",@(x),@(y),@(z)]);
+        }
     }
+    else if ([characteristic.UUID.UUIDString isEqualToString:BUTTONA_CHARACTERISTIC_UUID]
+             || [characteristic.UUID.UUIDString isEqualToString:BUTTONB_CHARACTERISTIC_UUID])
+    {
+        [peripheral readValueForCharacteristic:characteristic];
+        NSData *data = characteristic.value;
+        const uint8_t *bytes = (const uint8_t *)[data bytes]; 
+        int state = bytes[0];
+        std::cout << "state:" << state << std::endl;
+        NSString *tag = [characteristic.UUID.UUIDString isEqualToString:BUTTONA_CHARACTERISTIC_UUID] ? @"buttonA":@"buttonB";
+        if(self.onData)
+        {
+            self.onData(@[tag,@(state)]);
+        }
+    }
+        
 }
 
 - (void) peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error

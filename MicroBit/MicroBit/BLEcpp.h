@@ -17,7 +17,8 @@ public:
     BLEcpp(int port);
     ~BLEcpp();
     BLEImpl* impl;
-    void sendAccData(int data[3]);
 private:
     int portNum;
+    void sendAccData(int data[3]);
+    void sendButtonData(bool buttonA, int state);
 };

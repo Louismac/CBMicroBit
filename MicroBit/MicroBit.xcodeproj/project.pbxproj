@@ -18,7 +18,7 @@
 		B04133DD1F9E342900C046EB /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
-			dstPath = "";
+			dstPath = "~/Documents/programming/microbit";
 			dstSubfolderSpec = 0;
 			files = (
 				B02DEDF81FA096A600C57A2F /* MicroBit in CopyFiles */,
