@@ -31,7 +31,7 @@ struct BLEImpl
     BLEBridge *wrapped;
 };
 
-BLEcpp::BLEcpp(int port):
+BLEcpp::BLEcpp(int port,bool osc):
 impl(new BLEImpl)
 {
     sendPort = port;
@@ -40,17 +40,23 @@ impl(new BLEImpl)
         if(service == "accelerometer")
         {
             int accData[3] = {[data[1] intValue],[data[2] intValue],[data[3] intValue]};
-            sendAccData(accData);
+            if(osc) {
+                sendAccData(accData);
+            }
         }
         else if (service == "buttonA")
         {
-            int state = [data[1] intValue];
-            sendButtonData(true, state);
+            if(osc) {
+                int state = [data[1] intValue];
+                sendButtonData(true, state);
+            }
         }
         else if (service == "buttonB")
         {
-            int state = [data[1] intValue];
-            sendButtonData(false, state);
+            if(osc) {
+                int state = [data[1] intValue];
+                sendButtonData(false, state);
+            }
         }
     } discoveryCallBack:^{
         std::cout << "did Find Micro:bit" << std::endl;

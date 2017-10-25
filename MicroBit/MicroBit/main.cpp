@@ -48,6 +48,6 @@ int main(int argc, const char * argv[])
     //EXAMPLE OF THREADING
     //thread t1(task1, "Hello");
     
-    BLEcpp obj(port);
+    BLEcpp obj(port,true);
     return 0;
 }

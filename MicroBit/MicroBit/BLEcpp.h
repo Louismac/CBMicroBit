@@ -26,7 +26,7 @@ struct BLEImpl;
 class BLEcpp
 {
 public:
-    BLEcpp(int port);
+    BLEcpp(int port,bool osc);
     ~BLEcpp();
     BLEImpl* impl;
 private:
