@@ -14,7 +14,7 @@ Alternatively, run the unix execitable CBMicroBit
 ```
 ./CBMicroBit
 ```
-from the terminal. 
+from the terminal. Or by double clicking on it.
 
 ## OSC Output
 
