@@ -49,6 +49,21 @@ Important changes to remember to make to the MicrobitConfig.h file if you are bu
 ### My Micro:bit isn't connecting
   Is it connected to another computer or already connected to your computer? The Micro:Bit will only connect to one Central and the program requires it to not be connected to anything when it runs (even your own computer ). You can check whether you are already connected to the Micro:Bit by clicking on the Bluetooth icon in your toolbar. If you are already connected, disconnect. The program should then pick it up again without needing to restart. 
 
+## Editting the Project
+
+The program is set up to run as a C++ object to be included in C++ projects, however, the internal Objective C code could easily to put into a native macOSX app. 
+
+In order to get receive the delegate callbacks for CoreBluetooth in a commandline tool (as opposed to an app), its necessary to create an NSRunLoop. This is blocks the main thread so this may have unforseen conseqeunces when included in other C++ projects. I havent been able to get this to work without doing this or by initiating the BLEcpp object not on the main thread. 
+
+Starting a NSRunLoop is not necessary for native macOSX apps and so this code can be removed from the init method of BLEBridge
+```
+- (instancetype) initWithDataCallback:(BLEArrayBlock) dataCallback
+                    discoveryCallBack:(BLEBlock) discoveryCallback
+                andConnectionCallback:(BLEBlock) connectionCallback
+
+in BLEBridge.mm
+```
+
 ## Contributions
 
 We use the excellent [OscpPk](http://gruntthepeon.free.fr/oscpkt/) library to output OSC 
