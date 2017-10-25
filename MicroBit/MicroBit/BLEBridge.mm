@@ -253,7 +253,7 @@
         y = CFSwapInt16LittleToHost(*(int16_t *)(&reportData[1]));
         z = CFSwapInt16LittleToHost(*(int16_t *)(&reportData[2]));
         
-        std::cout << "x:" << x << " y:" << y << " z:" << z << std::endl;
+        //std::cout << "x:" << x << " y:" << y << " z:" << z << std::endl;
         
         if(self.onData)
         {
