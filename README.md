@@ -51,18 +51,33 @@ Important changes to remember to make to the MicrobitConfig.h file if you are bu
 
 ## Editting the Project
 
-The program is set up to run as a C++ object to be included in C++ projects, however, the internal Objective C code could easily to put into a native macOSX app. 
+The program is set up to run as a C++ object to be included in C++ projects, however, the internal Objective C code could easily to put into a native macOSX app (see BLEBridge.mm). 
 
-In order to get receive the delegate callbacks for CoreBluetooth in a commandline tool (as opposed to an app), its necessary to create an NSRunLoop. This is blocks the main thread so this may have unforseen conseqeunces when included in other C++ projects. I havent been able to get this to work without doing this or by initiating the BLEcpp object not on the main thread. 
+In order to get receive the delegate callbacks for CoreBluetooth in a commandline tool (as opposed to an app), its necessary to create an NSRunLoop. This is blocks the main thread so this may have unforseen conseqeunces when included in other C++ projects. I haven't been able to get this to work without doing this or by initiating the BLEcpp object not on the main thread. You can however, execute C++ code on a background thread simultaneously whilst the Micro:Bit is connecting and and receiving dta over BLE on the main thread. There is a simple example of this in main.cpp.
 
-Starting a NSRunLoop is not necessary for native macOSX apps and so this code can be removed from the init method of BLEBridge
+To include the CBMicroBit in a C++ project simply instanitiate the BLEcpp object
+
 ```
-- (instancetype) initWithDataCallback:(BLEArrayBlock) dataCallback
-                    discoveryCallBack:(BLEBlock) discoveryCallback
-                andConnectionCallback:(BLEBlock) connectionCallback
+BLEcpp ble;
+```
+
+Starting a NSRunLoop is not necessary for native macOSX apps and so this can be disabled by commenting out
+
+```
+#define CPP
+```
 
 in BLEBridge.mm
+
+You can also change what data is reported by altering the options at the top of BLEBridge.mm
+
 ```
+#define ACCELEROMETER <YES/NO>
+#define BUTTON <YES/NO>
+#define IO <YES/NO>
+```
+
+The IO Pin service is not yet implemented
 
 ## Contributions
 

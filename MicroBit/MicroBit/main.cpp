@@ -21,15 +21,33 @@
 
 #include "BLEcpp.h"
 #include <sstream>
+#include <string>
+#include <iostream>
+#include <thread>
+
+using namespace std;
+
+void task1(string msg)
+{
+    for(int i = 0; i < 100 ; i++)
+    {
+       cout << "task1 says: " << msg << endl;;
+       this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+}
 
 int main(int argc, const char * argv[])
 {
     int port = 9109;
     if(argc == 2)
     {
-        std::stringstream ss(argv[1]);
+        stringstream ss(argv[1]);
         ss >> port;
     }
+    
+    //EXAMPLE OF THREADING
+    //thread t1(task1, "Hello");
+    
     BLEcpp obj(port);
     return 0;
 }

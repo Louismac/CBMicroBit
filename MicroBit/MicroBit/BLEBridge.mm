@@ -44,6 +44,8 @@
 #define LED NO
 #define IO NO
 
+#define CPP
+
 @class CBCentralManager;
 
 @interface BLEBridge()<CBCentralManagerDelegate, CBPeripheralDelegate>
@@ -72,7 +74,6 @@
     if(self)
     {
         std::cout << "init ObjC" << std::endl;
-        NSRunLoop *runLoop;
         self.connecting = NO;
         self.connected = NO;
         self.foundMicroBit = NO;
@@ -84,16 +85,19 @@
             self.onData = dataCallback;
             self.onFindingMicrobit = discoveryCallback;
             self.onConnection = connectionCallback;
-            dispatch_queue_t q = dispatch_get_main_queue();
+            dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+            //dispatch_queue_t q = dispatch_get_main_queue();
             dispatch_async(q, ^{
                 std::cout << "making manager" << std::endl;
                 self.manager = [[CBCentralManager alloc] initWithDelegate:nil queue:nil];
                 self.manager.delegate = self;
             });
-            runLoop = [NSRunLoop currentRunLoop];
+#ifdef CPP
+            NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
             while(([runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]))
             {
             }
+#endif
         };
     }
     return self;
