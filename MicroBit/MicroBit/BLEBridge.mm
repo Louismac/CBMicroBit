@@ -86,11 +86,21 @@
     [self.manager stopScan];
 }
 
+#pragma --mark CBCentralManagerDelegate
+
+- (void) centralManagerDidUpdateState:(CBCentralManager *)central
+{
+    [self isLECapableHardware];
+    std::cout << "Did update state" << std::endl;
+}
+
 - (void) centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)aPeripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI
 {
     if([aPeripheral name])
     {
-        if([[aPeripheral name] isEqualToString:@"BBC micro:bit [vepog]"] && !self.connecting && !self.connected)
+        BOOL isMicrobit = [[aPeripheral name] rangeOfString:@"BBC micro:bit"].location != NSNotFound;
+
+        if(isMicrobit && !self.connecting && !self.connected)
         {
             self.connecting = YES;
             const char * name = [[aPeripheral name] UTF8String];
@@ -151,6 +161,8 @@
     }
 }
 
+#pragma --mark CBCBPeripheralDelegate
+
 - (void) peripheral:(CBPeripheral *)aPeripheral didDiscoverServices:(NSError *)error
 {
     std::cout << "didDiscoverServices" << std::endl;
@@ -193,12 +205,6 @@
     {
         self.onAccData(@[@(x),@(y),@(z)]);
     }
-    
-//    F53OSCMessage *message =
-//    [F53OSCMessage messageWithAddressPattern:@"/bla/bla/bla"
-//                                   arguments:@[@x,@y,@z]];
-//    [oscClient sendPacket:message toHost:@"127.0.0.1" onPort:23456];
-    
 }
 
 - (void) peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
@@ -211,12 +217,6 @@
         NSLog(@"ERROR updating notify for characteristic %@ : %@",characteristic.UUID, error.localizedDescription);
     }
     
-}
-
-- (void) centralManagerDidUpdateState:(CBCentralManager *)central
-{
-    [self isLECapableHardware];
-    std::cout << "Did update state" << std::endl;
 }
 
 - (BOOL) isLECapableHardware

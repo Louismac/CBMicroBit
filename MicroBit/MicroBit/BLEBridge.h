@@ -14,6 +14,7 @@ typedef void(^BLEBlock)(void);
 typedef void(^BLEIntBlock)(int);
 typedef void(^BLEArrayBlock)(NSArray *);
 
+- (instancetype) __unavailable init;
 - (instancetype) initWithDataCallback:(BLEArrayBlock) dataCallback
                     discoveryCallBack:(BLEBlock) discoveryCallback
                 andConnectionCallback:(BLEBlock) connectionCallback;

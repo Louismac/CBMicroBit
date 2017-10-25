@@ -35,6 +35,7 @@ impl(new BLEImpl)
 
 BLEcpp::~BLEcpp()
 {
+    std::cout << "destructor called" << std::endl;
     if (impl)
         [impl->wrapped cleanUp];
     delete impl;

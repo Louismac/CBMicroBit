@@ -12,15 +12,13 @@
 		B03B87941F9E36C400ECAD68 /* BLEcpp.mm in Sources */ = {isa = PBXBuildFile; fileRef = B03B87921F9E36C400ECAD68 /* BLEcpp.mm */; };
 		B04133E31F9E342900C046EB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B04133E21F9E342900C046EB /* main.cpp */; };
 		B04133F11F9E345700C046EB /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B04133F01F9E344A00C046EB /* CoreBluetooth.framework */; };
-		B0AE6C941F9F9D3600D5C01B /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0AE6C931F9F9D3200D5C01B /* CFNetwork.framework */; };
-		B0AE6C961F9F9D3E00D5C01B /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0AE6C951F9F9D3A00D5C01B /* Security.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		B04133DD1F9E342900C046EB /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
-			dstPath = /Users/louismccallum/Documents/programming/microbit;
+			dstPath = "";
 			dstSubfolderSpec = 0;
 			files = (
 				B02DEDF81FA096A600C57A2F /* MicroBit in CopyFiles */,
@@ -37,9 +35,6 @@
 		B04133DF1F9E342900C046EB /* MicroBit */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MicroBit; sourceTree = BUILT_PRODUCTS_DIR; };
 		B04133E21F9E342900C046EB /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		B04133F01F9E344A00C046EB /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
-		B0991C3C1F9E4F110045B57D /* MicroBit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MicroBit.entitlements; sourceTree = "<group>"; };
-		B0AE6C931F9F9D3200D5C01B /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		B0AE6C951F9F9D3A00D5C01B /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		B0AE6E6B1F9FA63D00D5C01B /* udp.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = udp.hh; sourceTree = "<group>"; };
 		B0AE6E6C1F9FA63D00D5C01B /* oscpkt.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = oscpkt.hh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -49,8 +44,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B0AE6C961F9F9D3E00D5C01B /* Security.framework in Frameworks */,
-				B0AE6C941F9F9D3600D5C01B /* CFNetwork.framework in Frameworks */,
 				B04133F11F9E345700C046EB /* CoreBluetooth.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -85,7 +78,6 @@
 				B03B878F1F9E36C400ECAD68 /* BLEBridge.mm */,
 				B03B87901F9E36C400ECAD68 /* BLEcpp.h */,
 				B03B87921F9E36C400ECAD68 /* BLEcpp.mm */,
-				B0991C3C1F9E4F110045B57D /* MicroBit.entitlements */,
 			);
 			path = MicroBit;
 			sourceTree = "<group>";
@@ -93,8 +85,6 @@
 		B04133EF1F9E344A00C046EB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B0AE6C951F9F9D3A00D5C01B /* Security.framework */,
-				B0AE6C931F9F9D3200D5C01B /* CFNetwork.framework */,
 				B04133F01F9E344A00C046EB /* CoreBluetooth.framework */,
 			);
 			name = Frameworks;

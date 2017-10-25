@@ -7,9 +7,7 @@
 //
 
 #include "BLEcpp.h"
-#include <thread>
 #include <sstream>
-#include <iostream>
 
 int main(int argc, const char * argv[])
 {
