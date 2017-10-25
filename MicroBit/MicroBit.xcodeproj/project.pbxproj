@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B02DEDF81FA096A600C57A2F /* MicroBit in CopyFiles */ = {isa = PBXBuildFile; fileRef = B04133DF1F9E342900C046EB /* MicroBit */; };
 		B03B87931F9E36C400ECAD68 /* BLEBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = B03B878F1F9E36C400ECAD68 /* BLEBridge.mm */; };
 		B03B87941F9E36C400ECAD68 /* BLEcpp.mm in Sources */ = {isa = PBXBuildFile; fileRef = B03B87921F9E36C400ECAD68 /* BLEcpp.mm */; };
 		B04133E31F9E342900C046EB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B04133E21F9E342900C046EB /* main.cpp */; };
@@ -18,12 +19,13 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		B04133DD1F9E342900C046EB /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
+			buildActionMask = 12;
+			dstPath = /Users/louismccallum/Documents/programming/microbit;
 			dstSubfolderSpec = 0;
 			files = (
+				B02DEDF81FA096A600C57A2F /* MicroBit in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
