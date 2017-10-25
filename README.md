@@ -15,19 +15,27 @@ Alternatively, run the unix execitable CBMicroBit (./CBMicroBit) from the termin
 The program outputs to localhost:9109 by default. The output port can be set using the first argument of the program
 
 Either edit the scheme in XCode
-  CBMicrobit > Edit Scheme > Arguments > Arguments Passed on Launch
+```
+  CBMicrobit -> Edit Scheme -> Arguments -> Arguments Passed on Launch
+```
 
 Or in the terminal 
+```
   ./CBMicroBit <port>
-  
+```
 The ouputs are currently 
+```
   /acc,<x>,<y>,<z> for the accelerometer
   /buttonA,<state> for button A state
   /buttonB,<state> for button B state
- 
+```
+
  The Button states are only outputted when they change 
+ 
   0 = off
+ 
   1 = press
+ 
   2 = longpress
   
 
@@ -38,7 +46,7 @@ Important changes to remember to make to the MicrobitConfig.h file if you are bu
 
 # Contributions
 
-We use the excellent OscpPk library to output OSC http://gruntthepeon.free.fr/oscpkt/
+We use the excellent [OscpPk](http://gruntthepeon.free.fr/oscpkt/) library to output OSC 
 
 # License
 
