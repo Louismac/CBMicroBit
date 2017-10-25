@@ -10,7 +10,11 @@ It can be standalone as a Unix Executable, included in C++ projects or native Ob
 
 Simply open and run the XCode project (MicroBit.xcodeproj). 
 
-Alternatively, run the unix execitable CBMicroBit (./CBMicroBit) from the terminal. 
+Alternatively, run the unix execitable CBMicroBit 
+```
+./CBMicroBit
+```
+from the terminal. 
 
 ## OSC Output
 
@@ -33,13 +37,12 @@ The ouputs are currently
 ```
 
  The Button states are only outputted when they change 
- 
+
+ ```
   0 = off
- 
   1 = press
- 
   2 = longpress
-  
+ ``` 
 
 ## The Micro:Bit
 We've included a hex file (CBMicrobit.hex) that can just be dragged onto the MicroBit. All it does it advertise the accelerometer, button, thermometer, LED and IO Pin services. 
@@ -53,9 +56,9 @@ Important changes to remember to make to the MicrobitConfig.h file if you are bu
 
 ## Editting the Project
 
-The program is set up to run as a C++ object to be included in C++ projects, however, the internal Objective C code could easily to put into a native macOSX app (see BLEBridge.mm). 
+The program is set up to run as a C++ object to be included in C++ projects, however, the internal Objective C code could easily to put into a native macOSX app (see [BLEBridge.mm](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/BLEBridge.mm)). 
 
-In order to get receive the delegate callbacks for CoreBluetooth in a commandline tool (as opposed to an app), its necessary to create an NSRunLoop. This is blocks the main thread so this may have unforseen conseqeunces when included in other C++ projects. I haven't been able to get this to work without doing this or by initiating the BLEcpp object not on the main thread. You can however, execute C++ code on a background thread simultaneously whilst the Micro:Bit is connecting and and receiving dta over BLE on the main thread. There is a simple example of this in main.cpp.
+In order to get receive the delegate callbacks for CoreBluetooth in a commandline tool (as opposed to an app), its necessary to create an NSRunLoop. This is blocks the main thread so this may have unforseen conseqeunces when included in other C++ projects. I haven't been able to get this to work without doing this or by initiating the BLEcpp object not on the main thread. You can however, execute C++ code on a background thread whilst the Micro:Bit is connecting and receiving data over BLE on the main thread. There is a simple example of this in [main.cpp](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/main.cpp).
 
 To include the CBMicroBit in a C++ project simply instanitiate the BLEcpp object
 
@@ -69,9 +72,9 @@ Starting a NSRunLoop is not necessary for native macOSX apps and so this can be 
 #define CPP
 ```
 
-in BLEBridge.mm
+in [BLEBridge.mm](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/BLEBridge.mm)
 
-You can also change what data is reported by altering the options at the top of BLEBridge.mm
+You can also change what data is reported by altering the options at the top of [BLEBridge.mm](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/BLEBridge.mm)
 
 ```
 #define ACCELEROMETER <YES/NO>
@@ -83,7 +86,7 @@ The IO Pin service is not yet implemented
 
 ## Contributions
 
-We use the excellent [OscpPk](http://gruntthepeon.free.fr/oscpkt/) library to output OSC 
+We use the excellent [Oscpkt](http://gruntthepeon.free.fr/oscpkt/) library to output OSC 
 
 ## License
 
