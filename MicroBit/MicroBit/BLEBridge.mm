@@ -228,7 +228,7 @@
     {
         [peripheral readValueForCharacteristic:characteristic];
         NSData *data = characteristic.value;
-        const uint8_t *reportData = (const uint8_t *)[data bytes];
+        const uint16_t *reportData = (const uint16_t *)[data bytes];
         int16_t x = 0;
         int16_t y = 0;
         int16_t z = 0;
@@ -236,6 +236,8 @@
         x = CFSwapInt16LittleToHost(*(int16_t *)(&reportData[0]));
         y = CFSwapInt16LittleToHost(*(int16_t *)(&reportData[1]));
         z = CFSwapInt16LittleToHost(*(int16_t *)(&reportData[2]));
+        
+        std::cout << "x:" << x << " y:" << y << " z:" << z << std::endl;
         
         if(self.onData)
         {
