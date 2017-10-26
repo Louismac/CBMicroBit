@@ -1,5 +1,5 @@
 //
-//  main.m
+//  main.cpp
 //  MicroBit
 //
 // Copyright 2017 Louis McCallum
@@ -19,7 +19,7 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-#include "BLEcpp.h"
+#include "CBMicroBit.h"
 #include <sstream>
 #include <string>
 #include <iostream>
@@ -48,6 +48,6 @@ int main(int argc, const char * argv[])
     //EXAMPLE OF THREADING
     //thread t1(task1, "Hello");
     
-    BLEcpp obj(port,true);
+    CBMicroBit obj(port,true);
     return 0;
 }

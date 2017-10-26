@@ -1,5 +1,5 @@
 //
-// BLEcpp.cpp
+// CBMicroBit.cpp
 //
 // Copyright 2017 Louis McCallum
 //
@@ -18,8 +18,8 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-#include "BLEcpp.h"
-#import "BLEBridge.h"
+#include "CBMicroBit.h"
+#import "CBMicroBitBridge.h"
 #import <Foundation/Foundation.h>
 #include <iostream>
 #include "oscpkt.hh"
@@ -28,14 +28,14 @@ using namespace oscpkt;
 
 struct BLEImpl
 {
-    BLEBridge *wrapped;
+    CBMicroBitBridge *wrapped;
 };
 
-BLEcpp::BLEcpp(int port,bool osc):
+CBMicroBit::CBMicroBit(int port,bool osc):
 impl(new BLEImpl)
 {
     sendPort = port;
-    impl->wrapped = [[BLEBridge alloc] initWithDataCallback:^(NSArray *data){
+    impl->wrapped = [[CBMicroBitBridge alloc] initWithDataCallback:^(NSArray *data){
         std::string service = [data[0] UTF8String];
         if(service == "accelerometer")
         {
@@ -65,7 +65,7 @@ impl(new BLEImpl)
     }];
 }
 
-BLEcpp::~BLEcpp()
+CBMicroBit::~CBMicroBit()
 {
     std::cout << "destructor called" << std::endl;
     if (impl)
@@ -73,7 +73,7 @@ BLEcpp::~BLEcpp()
     delete impl;
 }
 
-void BLEcpp::sendButtonData(bool buttonA, int state)
+void CBMicroBit::sendButtonData(bool buttonA, int state)
 {
     UdpSocket sock;
     sock.connectTo("localhost", sendPort);
@@ -89,7 +89,7 @@ void BLEcpp::sendButtonData(bool buttonA, int state)
     sock.close();
 }
 
-void BLEcpp::sendAccData(int data[3])
+void CBMicroBit::sendAccData(int data[3])
 {
     UdpSocket sock;
     sock.connectTo("localhost", sendPort);

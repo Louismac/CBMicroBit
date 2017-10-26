@@ -56,7 +56,7 @@ Important changes to remember to make to the MicrobitConfig.h file if you are bu
 
 ## Editting the Project
 
-The program is set up to run as a C++ object to be included in C++ projects, however, the internal Objective C code could easily to put into a native macOSX app (see [BLEBridge.mm](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/BLEBridge.mm)). 
+The program is set up to run as a C++ object to be included in C++ projects, however, the internal Objective C code could easily to put into a native macOSX app (see [CBMicroBitBridge.mm](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/CBMicroBitBridge.mm)). 
 
 In order to get receive the delegate callbacks for CoreBluetooth in a commandline tool (as opposed to an app), its necessary to create an NSRunLoop. This is blocks the main thread so this may have unforseen conseqeunces when included in other C++ projects. I haven't been able to get this to work without doing this or by initiating the BLEcpp object not on the main thread. You can however, execute C++ code on a background thread whilst the Micro:Bit is connecting and receiving data over BLE on the main thread. There is a simple example of this in [main.cpp](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/main.cpp).
 
@@ -72,9 +72,9 @@ Starting a NSRunLoop is not necessary for native macOSX apps and so this can be 
 #define CPP
 ```
 
-in [BLEBridge.mm](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/BLEBridge.mm)
+in [CBMicroBitBridge.mm](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/CBMicroBitBridge.mm)
 
-You can also change what data is reported by altering the options at the top of [BLEBridge.mm](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/BLEBridge.mm)
+You can also change what data is reported by altering the options at the top of [CBMicroBitBridge.mm](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/CBMicroBitBridge.mm)
 
 ```
 #define ACCELEROMETER <YES/NO>

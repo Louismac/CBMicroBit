@@ -1,5 +1,5 @@
 //
-// BLEBridge.h
+//  BLEcpp.hpp
 //
 // Copyright 2017 Louis McCallum
 //
@@ -18,27 +18,19 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+#include <stdio.h>
+#include <vector>
 
-#import <Cocoa/Cocoa.h>
+struct BLEImpl;
 
-@interface BLEBridge : NSObject
-
-typedef void(^BLEBlock)(void);
-typedef void(^BLEIntBlock)(int);
-typedef void(^BLEArrayBlock)(NSArray *);
-
-- (instancetype) __unavailable init;
-- (instancetype) initWithDataCallback:(BLEArrayBlock) dataCallback
-                    discoveryCallBack:(BLEBlock) discoveryCallback
-                andConnectionCallback:(BLEBlock) connectionCallback;
-
-- (void) startScan;
-- (NSArray *) peripherals;
-- (void) cleanUp;
-
-@property (nonatomic, assign) BOOL connecting;
-@property (nonatomic, assign) BOOL connected;
-@property (nonatomic, assign) BOOL poweredOn;
-@property (nonatomic, assign) BOOL foundMicroBit;
-
-@end
+class CBMicroBit
+{
+public:
+    CBMicroBit(int port,bool osc);
+    ~CBMicroBit();
+    BLEImpl* impl;
+private:
+    int sendPort;
+    void sendAccData(int data[3]);
+    void sendButtonData(bool buttonA, int state);
+};

@@ -1,5 +1,5 @@
 //
-//  BLEBridge.m
+//  CBMicroBitBridge.mm
 //
 // Copyright 2017 Louis McCallum
 //
@@ -18,7 +18,7 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-#import "BLEBridge.h"
+#import "CBMicroBitBridge.h"
 #import <QuartzCore/QuartzCore.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 #include <iostream>
@@ -48,7 +48,7 @@
 
 @class CBCentralManager;
 
-@interface BLEBridge()<CBCentralManagerDelegate, CBPeripheralDelegate>
+@interface CBMicroBitBridge()<CBCentralManagerDelegate, CBPeripheralDelegate>
 
 @property (nonatomic, strong) CBCentralManager *manager;
 @property (nonatomic, strong) CBPeripheral *peripheral;
@@ -64,7 +64,7 @@
 
 @end
 
-@implementation BLEBridge
+@implementation CBMicroBitBridge
 
 - (instancetype) initWithDataCallback:(BLEArrayBlock) dataCallback
                     discoveryCallBack:(BLEBlock) discoveryCallback
