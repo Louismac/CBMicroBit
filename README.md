@@ -60,10 +60,10 @@ The program is set up to run as a C++ object to be included in C++ projects, how
 
 In order to get receive the delegate callbacks for CoreBluetooth in a commandline tool (as opposed to an app), its necessary to create an NSRunLoop. This is blocks the main thread so this may have unforseen conseqeunces when included in other C++ projects. I haven't been able to get this to work without doing this or by initiating the BLEcpp object not on the main thread. You can however, execute C++ code on a background thread whilst the Micro:Bit is connecting and receiving data over BLE on the main thread. There is a simple example of this in [main.cpp](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/main.cpp).
 
-To include the CBMicroBit in a C++ project simply instanitiate the BLEcpp object, giving the output port and whether you want to OSC the output
+To include the CBMicroBit in a C++ project simply instanitiate the CBMicroBit object, giving the output port and whether you want to OSC the output
 
 ```
-BLEcpp ble(<port>,<osc>);
+CBMicroBit ble(<port>,<osc>);
 ```
 
 Starting a NSRunLoop is not necessary for native macOSX apps and so this can be disabled by commenting out
