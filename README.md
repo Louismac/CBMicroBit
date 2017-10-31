@@ -1,10 +1,10 @@
 # CBMicroBit
 
-CBMicroBit is a C++ wrapper around CoreBluetooth to easily connect a BBC Micro:Bit to a computer running OSX over Bluetooth Low Energy and optionally output to localhost over OSC.
+CBMicroBit is a C++ wrapper around CoreBluetooth to easily connect a BBC Micro:Bit to a computer running OSX or and mobile device running iOS over Bluetooth Low Energy and optionally output to localhost over OSC.
 
 On starting, the program will search the Micro:bit, connect and then subscribe to the Accelerometer and Button services.
 
-It can be standalone as a Unix Executable, included in C++ projects or native Objective C apps.
+It can be standalone as a Unix Executable, included in C++ projects or native Objective C apps (Desktop macOSX apps or iOS phone apps).
 
 ## To Run
 
@@ -66,7 +66,7 @@ To include the CBMicroBit in a C++ project simply instanitiate the CBMicroBit ob
 CBMicroBit ble(<port>,<osc>);
 ```
 
-Starting a NSRunLoop is not necessary for native macOSX apps and so this can be disabled by commenting out
+Starting a NSRunLoop is not necessary for Desktop macOSX apps or iOS phone apps and so this can be disabled by commenting out
 
 ```
 #define CPP
