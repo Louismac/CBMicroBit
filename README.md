@@ -2,9 +2,9 @@
 
 CBMicroBit is a C++ wrapper around CoreBluetooth to easily connect a BBC Micro:Bit to a computer running OSX over Bluetooth Low Energy and optionally output to localhost over OSC.
 
-On starting, the program will search the Micro:bit, connect and then subscribe to the Accelerometer and Button services.
+On starting, the program will search the Micro:bit, connect and then subscribe to the Accelerometer and Button services. Button and accelerometer data can then be picked up by applications running on OSX that accept OSC (e.g. Max/MSP, Supercollider, Processing).
 
-It can be standalone as a Unix Executable, included in C++ projects or native Objective C apps.
+It can be standalone as a Unix Executable, included in C++ projects or native Objective C apps (Desktop macOSX apps or iOS phone apps).
 
 ## To Run
 
@@ -15,6 +15,11 @@ Alternatively, run the unix execitable CBMicroBit
 ./CBMicroBit
 ```
 from the terminal. Or by double clicking on it.
+
+## The Micro:Bit
+We've included a hex file (CBMicrobit.hex) that can just be dragged onto the MicroBit. All it does it advertise the accelerometer, button, thermometer, LED and IO Pin services. 
+
+Important changes to remember to make to the MicrobitConfig.h file (/microbit-samples/yotta_modules/microbit-dal/inc/core/MicroBitConfig.h) if you are building your own /hex file is setting MICROBIT_BLE_OPEN to 1 (this disables pairing) and MICROBIT_SD_GATT_TABLE_SIZE to its maximum, which is  0x700. If this is not done then the services will not appear. 
 
 ## OSC Output
 
@@ -32,8 +37,8 @@ Or in the terminal
 The ouputs are currently 
 ```
   /acc,<x>,<y>,<z> for the accelerometer
-  /buttonA,<state> for button A state
-  /buttonB,<state> for button B state
+  buttonA,<state> for button A state
+  buttonB,<state> for button B state
 ```
 
  The Button states are only outputted when they change 
@@ -42,17 +47,7 @@ The ouputs are currently
   0 = off
   1 = press
   2 = longpress
- ``` 
-
-## The Micro:Bit
-We've included a hex file (CBMicrobit.hex) that can just be dragged onto the MicroBit. All it does it advertise the accelerometer, button, thermometer, LED and IO Pin services. 
-
-Important changes to remember to make to the MicrobitConfig.h file if you are building your own project with C++ is setting MICROBIT_BLE_OPEN to 1 (this disables pairing) and MICROBIT_SD_GATT_TABLE_SIZE to its maximum, which is  0x700. If this is not done then the services will not appear.  
-
-## Trouble shooting
-
-### My Micro:bit isn't connecting
-  Is it connected to another computer or already connected to your computer? The Micro:Bit will only connect to one Central and the program requires it to not be connected to anything when it runs (even your own computer ). You can check whether you are already connected to the Micro:Bit by clicking on the Bluetooth icon in your toolbar. If you are already connected, disconnect. The program should then pick it up again without needing to restart. 
+ ```  
 
 ## Editting the Project
 
@@ -66,7 +61,7 @@ To include the CBMicroBit in a C++ project simply instanitiate the CBMicroBit ob
 CBMicroBit ble(<port>,<osc>);
 ```
 
-Starting a NSRunLoop is not necessary for native macOSX apps and so this can be disabled by commenting out
+Starting a NSRunLoop is not necessary for Desktop macOSX apps or iOS phone apps and so this can be disabled by commenting out
 
 ```
 #define CPP
@@ -83,6 +78,11 @@ You can also change what data is reported by altering the options at the top of 
 ```
 
 The IO Pin service is not yet implemented
+
+## Trouble shooting
+
+### My Micro:bit isn't connecting
+  Is it connected to another computer or already connected to your computer? The Micro:Bit will only connect to one Central and the program requires it to not be connected to anything when it runs (even your own computer ). You can check whether you are already connected to the Micro:Bit by clicking on the Bluetooth icon in your toolbar. If you are already connected, disconnect. The program should then pick it up again without needing to restart. 
 
 ## Contributions
 
