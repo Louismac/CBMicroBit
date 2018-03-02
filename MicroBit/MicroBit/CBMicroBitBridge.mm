@@ -86,7 +86,6 @@
             self.onFindingMicrobit = discoveryCallback;
             self.onConnection = connectionCallback;
             dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-            //dispatch_queue_t q = dispatch_get_main_queue();
             dispatch_async(q, ^{
                 std::cout << "making manager" << std::endl;
                 self.manager = [[CBCentralManager alloc] initWithDelegate:nil queue:nil];
