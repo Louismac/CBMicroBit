@@ -19,7 +19,7 @@ from the terminal. Or by double clicking on it.
 ## The Micro:Bit
 We've included a hex file (CBMicrobit.hex) that can just be dragged onto the MicroBit. All it does it advertise the accelerometer, button, thermometer, LED and IO Pin services. 
 
-Important changes to remember to make to the MicrobitConfig.h file if you are building your own project with C++ is setting MICROBIT_BLE_OPEN to 1 (this disables pairing) and MICROBIT_SD_GATT_TABLE_SIZE to its maximum, which is  0x700. If this is not done then the services will not appear. 
+Important changes to remember to make to the MicrobitConfig.h file (/microbit-samples/yotta_modules/microbit-dal/inc/core/MicroBitConfig.h) if you are building your own /hex file is setting MICROBIT_BLE_OPEN to 1 (this disables pairing) and MICROBIT_SD_GATT_TABLE_SIZE to its maximum, which is  0x700. If this is not done then the services will not appear. 
 
 ## OSC Output
 
@@ -37,8 +37,8 @@ Or in the terminal
 The ouputs are currently 
 ```
   /acc,<x>,<y>,<z> for the accelerometer
-  /buttonA,<state> for button A state
-  /buttonB,<state> for button B state
+  buttonA,<state> for button A state
+  buttonB,<state> for button B state
 ```
 
  The Button states are only outputted when they change 
