@@ -82,7 +82,18 @@ CBMicroBit::~CBMicroBit()
 
 void CBMicroBit::sendButtonData(bool buttonA, int state)
 {
-    
+    UdpSocket sock;
+    sock.connectTo("localhost", sendPort);
+    Message msg(buttonA ? "/buttonA" : "/buttonB");
+    msg.pushInt32(state);
+    PacketWriter pw;
+    pw.startBundle().startBundle().addMessage(msg).endBundle().endBundle();
+    bool ok = sock.sendPacket(pw.packetData(), pw.packetSize());
+    if(!ok)
+    {
+        std::cout << "osc failed to send" << std::endl;
+    }
+    sock.close();
 }
 
 void CBMicroBit::sendPinData(int data[3])
