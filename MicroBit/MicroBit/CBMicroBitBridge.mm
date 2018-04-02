@@ -35,14 +35,21 @@
 #define BUTTONA_CHARACTERISTIC_UUID @"E95DDA90-251D-470A-A062-FA1922DFA9A8"
 #define BUTTONB_CHARACTERISTIC_UUID @"E95DDA91-251D-470A-A062-FA1922DFA9A8"
 #define IO_SERVICE_UUID @"E95D127B-251D-470A-A062-FA1922DFA9A8"
-#define IODATA_CHARACTERSTIC_UUID @"E95D8D00-251D-470A-A062-FA1922DFA9A8"
+#define IODATA_CHARACTERISTIC_UUID @"E95D8D00-251D-470A-A062-FA1922DFA9A8"
 #define LED_SERVICE_UUID @"E95DD91D-251D-470A-A062-FA1922DFA9A8"
 #define LEDTEXT_CHARACTERISTIC_UUID @"E95D93EE-251D-470A-A062-FA1922DFA9A8"
+#define IO_CONFIG_CHARACTERISTIC_UUID @"E95DB9FE-251D-470A-A062-FA1922DFA9A8"
+#define PIN_AD_CONFIG_CHARACTERISTIC_UUID @"E95D5899-251D-470A-A062-FA1922DFA9A8"
+
+#define BUTTON_A_TAG @"buttonA"
+#define BUTTON_B_TAG @"buttonB"
+#define ACCELEROMETER_TAG @"accelerometer"
+#define IO_TAG @"pins"
 
 #define ACCELEROMETER YES
 #define BUTTON YES
 #define LED NO
-#define IO NO
+#define IO YES
 
 #define CPP
 
@@ -62,6 +69,10 @@
 @property (nonatomic, assign) NSUInteger prevButtonA;
 @property (nonatomic, assign) NSUInteger prevButtonB;
 
+@property (nonatomic, assign) BOOL hasSetNotifyIOData;
+@property (nonatomic, assign) BOOL hasWrittenIOConfig;
+@property (nonatomic, assign) BOOL hasWrittenADConfig;
+
 @end
 
 @implementation CBMicroBitBridge
@@ -80,6 +91,9 @@
         self.poweredOn = NO;
         self.prevButtonA = 3;
         self.prevButtonB = 3;
+        self.hasSetNotifyIOData = NO;
+        self.hasWrittenIOConfig = NO;
+        self.hasWrittenADConfig = NO;
         @autoreleasepool
         {
             self.onData = dataCallback;
@@ -217,7 +231,9 @@
         }
         if([[aService.UUID UUIDString] isEqualToString:IO_SERVICE_UUID] && IO)
         {
-            [aPeripheral discoverCharacteristics:@[[CBUUID UUIDWithString:IODATA_CHARACTERSTIC_UUID]] forService:aService];
+            [aPeripheral discoverCharacteristics:@[[CBUUID UUIDWithString:IODATA_CHARACTERISTIC_UUID]] forService:aService];
+            [aPeripheral discoverCharacteristics:@[[CBUUID UUIDWithString:PIN_AD_CONFIG_CHARACTERISTIC_UUID]] forService:aService];
+            [aPeripheral discoverCharacteristics:@[[CBUUID UUIDWithString:IO_CONFIG_CHARACTERISTIC_UUID]] forService:aService];
         }
     }
 }
@@ -233,6 +249,49 @@
            || [aChar.UUID.UUIDString isEqualToString:BUTTONB_CHARACTERISTIC_UUID])
         {
             [aPeripheral setNotifyValue:YES forCharacteristic:aChar];
+        }
+        else if ([aChar.UUID.UUIDString isEqualToString:IO_CONFIG_CHARACTERISTIC_UUID])
+        {
+            if(!self.hasWrittenIOConfig)
+            {
+                NSMutableData *data = [NSMutableData data];
+                unsigned char bytes[4] = {0xFF, 0xFF, 0xFF, 0xFF};
+                [data appendBytes:bytes length:sizeof(bytes)];
+                
+                [aPeripheral writeValue:data forCharacteristic:aChar type:CBCharacteristicWriteWithResponse];
+                std::cout << "Writing to IO_CONFIG" << std::endl;
+                
+                [aPeripheral readValueForCharacteristic:aChar];
+                
+                self.hasWrittenIOConfig = YES;
+            }
+        }
+        else if ([aChar.UUID.UUIDString isEqualToString:PIN_AD_CONFIG_CHARACTERISTIC_UUID])
+        {
+            if(!self.hasWrittenADConfig)
+            {
+                NSMutableData *data = [NSMutableData data];
+                unsigned char bytes[4] = {0xFF, 0xFF, 0xFF, 0xFF};
+                [data appendBytes:bytes length:sizeof(bytes)];
+                
+                [aPeripheral writeValue:data forCharacteristic:aChar type:CBCharacteristicWriteWithResponse];
+                std::cout << "Writing to AD_CONFIG" << std::endl;
+                
+                [aPeripheral readValueForCharacteristic:aChar];
+                
+                self.hasWrittenADConfig = YES;
+            }
+        }
+        else if ([aChar.UUID.UUIDString isEqualToString:IODATA_CHARACTERISTIC_UUID])
+        {
+            if(!self.hasSetNotifyIOData)
+            {
+                [aPeripheral setNotifyValue:YES forCharacteristic:aChar];
+                [aPeripheral readValueForCharacteristic:aChar];
+                std::cout << "Reading from IODATA" << std::endl;
+                self.hasSetNotifyIOData = YES;
+            }
+
         }
     }
 }
@@ -256,7 +315,7 @@
         
         if(self.onData)
         {
-            self.onData(@[@"accelerometer",@(x),@(y),@(z)]);
+            self.onData(@[ACCELEROMETER_TAG,@(x),@(y),@(z)]);
         }
     }
     else if ([characteristic.UUID.UUIDString isEqualToString:BUTTONA_CHARACTERISTIC_UUID]
@@ -273,13 +332,13 @@
         
         if(buttonA)
         {
-            tag = @"buttonA";
+            tag = BUTTON_A_TAG;
             send = state != self.prevButtonA;
             self.prevButtonA = state;
         }
         else
         {
-            tag = @"buttonB";
+            tag = BUTTON_B_TAG;
             send = state != self.prevButtonB;
             self.prevButtonB = state;
         }
@@ -289,6 +348,30 @@
             std::cout << "state:" << state << std::endl;
             self.onData(@[tag,@(state)]);
         }
+    }
+    else if([characteristic.UUID.UUIDString isEqualToString:IODATA_CHARACTERISTIC_UUID])
+    {
+        [peripheral readValueForCharacteristic:characteristic];
+        NSData *data = characteristic.value;
+        if([data length] > 0)
+        {
+            const char *reportData = (const char *)[data bytes];
+            
+            uint8_t pin1 = *(uint8_t *)(&reportData[1]);
+            uint8_t pin2 = *(uint8_t *)(&reportData[3]);
+            uint8_t pin3 = *(uint8_t *)(&reportData[5]);
+            
+//            std::cout << "pin1:" << (uint)pin1 << std::endl;
+//            std::cout << "pin2:" << (uint)pin2 << std::endl;
+//            std::cout << "pin3:" << (uint)pin3 << std::endl;
+            self.onData(@[IO_TAG,@((uint)pin1), @((uint)pin2), @((uint)pin3)]);
+        }
+
+        
+    }
+    else if([characteristic.UUID.UUIDString isEqualToString:IO_CONFIG_CHARACTERISTIC_UUID])
+    {
+        std::cout << "Read IO_CONFIG" << std::endl;
     }
         
 }

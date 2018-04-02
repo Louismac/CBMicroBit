@@ -58,6 +58,13 @@ impl(new BLEImpl)
                 sendButtonData(false, state);
             }
         }
+        else if (service == "pins")
+        {
+            if(osc) {
+                int pinData[3] = {[data[1] intValue],[data[2] intValue],[data[3] intValue]};
+                sendPinData(pinData);
+            }
+        }
     } discoveryCallBack:^{
         std::cout << "did Find Micro:bit" << std::endl;
     } andConnectionCallback:^{
@@ -75,10 +82,17 @@ CBMicroBit::~CBMicroBit()
 
 void CBMicroBit::sendButtonData(bool buttonA, int state)
 {
+    
+}
+
+void CBMicroBit::sendPinData(int data[3])
+{
     UdpSocket sock;
     sock.connectTo("localhost", sendPort);
-    Message msg(buttonA ? "buttonA":"buttonB");
-    msg.pushInt32(state);
+    Message msg("/pins");
+    msg.pushInt32(data[0]);
+    msg.pushInt32(data[1]);
+    msg.pushInt32(data[2]);
     PacketWriter pw;
     pw.startBundle().startBundle().addMessage(msg).endBundle().endBundle();
     bool ok = sock.sendPacket(pw.packetData(), pw.packetSize());

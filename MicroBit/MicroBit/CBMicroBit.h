@@ -33,4 +33,5 @@ private:
     int sendPort;
     void sendAccData(int data[3]);
     void sendButtonData(bool buttonA, int state);
+    void sendPinData(int data[3]);
 };
