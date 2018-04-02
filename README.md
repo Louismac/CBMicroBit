@@ -36,7 +36,7 @@ Or in the terminal
 ```
 The ouputs are currently 
 ```
-  /acc,<x>,<y>,<z> for the accelerometer
+  /accelerometer,<x>,<y>,<z> for the accelerometer
   /buttonA,<state> for button A state
   /buttonB,<state> for button B state
   /pins, <0>,<1>,<2> for IO pins
