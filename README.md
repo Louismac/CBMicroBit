@@ -37,8 +37,9 @@ Or in the terminal
 The ouputs are currently 
 ```
   /acc,<x>,<y>,<z> for the accelerometer
-  buttonA,<state> for button A state
-  buttonB,<state> for button B state
+  /buttonA,<state> for button A state
+  /buttonB,<state> for button B state
+  /pins, <0>,<1>,<2> for IO pins
 ```
 
  The Button states are only outputted when they change 
@@ -48,6 +49,8 @@ The ouputs are currently
   1 = press
   2 = longpress
  ```  
+
+The IO Pin service currently sets all pins to inputs (receiving sensor data) and sets all pins to analogue and then outputs the values of pins 0,1 and 2. To have more fined grained control or use pins as outputs, you'll need to change the IO_CONFIG characteristic settings in [CBMicroBitBridge.mm](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/CBMicroBitBridge.mm)
 
 ## Editting the Project
 
@@ -76,8 +79,6 @@ You can also change what data is reported by altering the options at the top of 
 #define BUTTON <YES/NO>
 #define IO <YES/NO>
 ```
-
-The IO Pin service is not yet implemented
 
 ## Trouble shooting
 
