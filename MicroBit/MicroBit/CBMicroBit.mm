@@ -102,7 +102,6 @@ void CBMicroBit::sendWekinatorData()
     {
         msg.pushFloat((float)aggData[i]);
     }
-    std::cout << "sending wekinator data to " << sendPort << std::endl;
     PacketWriter pw;
     pw.startBundle().startBundle().addMessage(msg).endBundle().endBundle();
     bool ok = sock.sendPacket(pw.packetData(), pw.packetSize());
