@@ -77,11 +77,14 @@
 
 @implementation CBMicroBitBridge
 
+bool pinInputs[19] = {true,true,true,true,true,true,true,true,true,true,true,true,true,true,true};
+
 - (instancetype) initWithDataCallback:(BLEArrayBlock) dataCallback
                     discoveryCallBack:(BLEBlock) discoveryCallback
                 andConnectionCallback:(BLEBlock) connectionCallback
 {
     self = [super init];
+
     if(self)
     {
         std::cout << "init ObjC" << std::endl;
@@ -113,6 +116,7 @@
 #endif
         };
     }
+    
     return self;
 }
 
@@ -238,6 +242,20 @@
     }
 }
 
+unsigned char ToByte(bool b[19], int start)
+{
+    unsigned char c = 0;
+    int end = start + 8;
+    if(end > 19)
+    {
+        end = 19;
+    }
+    for (int i = start; i < end; ++i)
+        if (b[i])
+            c |= 1 << i;
+    return c;
+}
+
 - (void) peripheral:(CBPeripheral *)aPeripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error
 {
     std::cout << "didDiscoverCharacteristicsForService" << std::endl;
@@ -255,7 +273,11 @@
             if(!self.hasWrittenIOConfig)
             {
                 NSMutableData *data = [NSMutableData data];
-                unsigned char bytes[4] = {0xFF, 0xFF, 0xFF, 0xFF};
+                unsigned char bytes[4] = {0x00, 0x00, 0x00, 0x00};
+                for(int i = 0; i < 3; i++)
+                {
+                    bytes[i] = ToByte(pinInputs, i * 8);
+                }
                 [data appendBytes:bytes length:sizeof(bytes)];
                 
                 [aPeripheral writeValue:data forCharacteristic:aChar type:CBCharacteristicWriteWithResponse];
@@ -356,15 +378,15 @@
         if([data length] > 0)
         {
             const char *reportData = (const char *)[data bytes];
+            uint8_t pinVals[19];
+            for(int i = 0; i < 19; i++)
+            {
+                pinVals[i] = *(uint8_t *)(&reportData[(i*2) + 1]);
+            }
             
-            uint8_t pin1 = *(uint8_t *)(&reportData[1]);
-            uint8_t pin2 = *(uint8_t *)(&reportData[3]);
-            uint8_t pin3 = *(uint8_t *)(&reportData[5]);
+            //std::cout << "pin1:" << (uint)pin1 << " pin2:" << (uint)pin2 << " pin3:" << (uint)pin3 << std::endl;
             
-//            std::cout << "pin1:" << (uint)pin1 << std::endl;
-//            std::cout << "pin2:" << (uint)pin2 << std::endl;
-//            std::cout << "pin3:" << (uint)pin3 << std::endl;
-            self.onData(@[IO_TAG,@((uint)pin1), @((uint)pin2), @((uint)pin3)]);
+            self.onData(@[IO_TAG,@((uint)pinVals[0]), @((uint)pinVals[1]), @((uint)pinVals[2])]);
         }
 
         

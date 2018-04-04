@@ -24,6 +24,8 @@
 #include <iostream>
 #include "oscpkt.hh"
 #include "udp.hh"
+//#define WEKA
+
 using namespace oscpkt;
 
 struct BLEImpl
@@ -100,10 +102,20 @@ void CBMicroBit::sendPinData(int data[3])
 {
     UdpSocket sock;
     sock.connectTo("localhost", sendPort);
+#ifdef WEKA
+    Message msg("/wek/inputs");
+    msg.pushFloat((float)data[0]);
+    msg.pushFloat((float)data[1]);
+    msg.pushFloat((float)data[2]);
+    msg.pushFloat((float)data[0]);
+    msg.pushFloat((float)data[1]);
+    msg.pushFloat((float)data[2]);
+#else
     Message msg("/pins");
-    msg.pushInt32(data[0]);
-    msg.pushInt32(data[1]);
-    msg.pushInt32(data[2]);
+    msg.pushDouble((double)data[0]);
+    msg.pushDouble((double)data[1]);
+    msg.pushDouble((double)data[2]);
+#endif
     PacketWriter pw;
     pw.startBundle().startBundle().addMessage(msg).endBundle().endBundle();
     bool ok = sock.sendPacket(pw.packetData(), pw.packetSize());
