@@ -26,12 +26,13 @@ struct BLEImpl;
 class CBMicroBit
 {
 public:
-    CBMicroBit(int port,bool osc);
+    CBMicroBit(int port, bool osc, bool wek);
     ~CBMicroBit();
     BLEImpl* impl;
 private:
     int sendPort;
     int aggData[8];
+    bool wekinator = false;
     void sendAccData(int data[3]);
     void sendButtonData(bool buttonA, int state);
     void sendPinData(int data[3]);

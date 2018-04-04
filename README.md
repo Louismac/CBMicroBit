@@ -50,7 +50,7 @@ The ouputs are currently
   2 = longpress
  ```  
 
-The IO Pin service currently sets all pins to inputs (receiving sensor data) and sets all pins to analogue and then outputs the values of pins 0,1 and 2. To have more fined grained control or use pins as outputs, you'll need to change the IO_CONFIG characteristic settings in [CBMicroBitBridge.mm](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/CBMicroBitBridge.mm)
+The IO Pin service currently sets all pins to inputs (receiving sensor data) and sets all pins to analogue and then outputs the values of pins 0,1 and 2. To have more fined grained control or use pins as outputs, you'll need to change the pinInputs array [CBMicroBitBridge.mm](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/CBMicroBitBridge.mm)
 
 ## Editting the Project
 
@@ -79,6 +79,16 @@ You can also change what data is reported by altering the options at the top of 
 #define BUTTON <YES/NO>
 #define IO <YES/NO>
 ```
+
+### Support For Wekinator
+
+You can send the data from the microbit directly to Rebecca Fiebrinks [Wekinator](http://wekinator.org/) machine learning tool by either setting the boolean in [CBMicroBit.mm](https://github.com/Louismac/CBMicroBit/blob/master/MicroBit/MicroBit/CBMicroBit.mm) or by passing the string "true" to as the second argument to the unix executable.
+
+```
+./CBMicroBit <port> <wekinator>
+```
+
+The data will be sent as an array of 8 floats [accx, accy, accz, buttonA, buttonB, pin1, pin2, pin3].
 
 ## Trouble shooting
 

@@ -24,7 +24,6 @@
 #include <iostream>
 #include "oscpkt.hh"
 #include "udp.hh"
-//#define WEKINATOR
 
 using namespace oscpkt;
 
@@ -33,57 +32,48 @@ struct BLEImpl
     CBMicroBitBridge *wrapped;
 };
 
-CBMicroBit::CBMicroBit(int port,bool osc):
+CBMicroBit::CBMicroBit(int port, bool osc, bool wek):
 impl(new BLEImpl)
 {
     sendPort = port;
+    wekinator = wek;
     impl->wrapped = [[CBMicroBitBridge alloc] initWithDataCallback:^(NSArray *data){
         std::string service = [data[0] UTF8String];
         if(service == "accelerometer")
         {
             int accData[3] = {[data[1] intValue], [data[2] intValue], [data[3] intValue]};
-#ifndef WEKINATOR
-            if(osc) {
+            if(osc && !wekinator) {
                 sendAccData(accData);
             }
-#endif
             aggData[0] = accData[0];
             aggData[1] = accData[1];
             aggData[2] = accData[2];
-#ifdef WEKINATOR
-            if(osc) {
+            if(osc && wekinator) {
                 sendWekinatorData();
             }
-#endif
         }
         else if (service == "buttonA")
         {
             int state = [data[1] intValue];
-#ifndef WEKINATOR
-            if(osc) {
+            if(osc && !wekinator) {
                 sendButtonData(true, state);
             }
-#endif
             aggData[3] = state;
         }
         else if (service == "buttonB")
         {
             int state = [data[1] intValue];
-#ifndef WEKINATOR
-            if(osc) {
+            if(osc && !wekinator) {
                 sendButtonData(false, state);
             }
-#endif
             aggData[4] = state;
         }
         else if (service == "pins")
         {
             int pinData[3] = {[data[1] intValue], [data[2] intValue], [data[3] intValue]};
-#ifndef WEKINATOR
-            if(osc) {
+            if(osc && !wekinator) {
                 sendPinData(pinData);
             }
-#endif
             aggData[5] = pinData[0];
             aggData[6] = pinData[1];
             aggData[7] = pinData[2];
@@ -112,6 +102,7 @@ void CBMicroBit::sendWekinatorData()
     {
         msg.pushFloat((float)aggData[i]);
     }
+    std::cout << "sending wekinator data to " << sendPort << std::endl;
     PacketWriter pw;
     pw.startBundle().startBundle().addMessage(msg).endBundle().endBundle();
     bool ok = sock.sendPacket(pw.packetData(), pw.packetSize());

@@ -39,15 +39,27 @@ void task1(string msg)
 int main(int argc, const char * argv[])
 {
     int port = 57120;
-    if(argc == 2)
+    bool wekinator = false;
+    if(argc >= 2)
     {
         stringstream ss(argv[1]);
         ss >> port;
+        cout << "port set to "<< port << endl;
     }
+   
+    if (argc >= 3)
+    {
+        string w = "";
+        stringstream ss(argv[2]);
+        ss >> w;
+        wekinator = w == "true";
+        cout << "wekinator set to "<< w << endl;
+    }
+    
     
     //EXAMPLE OF THREADING
     //thread t1(task1, "Hello");
     
-    CBMicroBit obj(port,true);
+    CBMicroBit obj(port,true, wekinator);
     return 0;
 }
