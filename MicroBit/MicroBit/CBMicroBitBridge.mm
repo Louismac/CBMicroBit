@@ -88,15 +88,7 @@ bool pinInputs[19] = {true,true,true,true,true,true,true,true,true,true,true,tru
     if(self)
     {
         std::cout << "init ObjC" << std::endl;
-        self.connecting = NO;
-        self.connected = NO;
-        self.foundMicroBit = NO;
-        self.poweredOn = NO;
-        self.prevButtonA = 3;
-        self.prevButtonB = 3;
-        self.hasSetNotifyIOData = NO;
-        self.hasWrittenIOConfig = NO;
-        self.hasWrittenADConfig = NO;
+        [self reset];
         @autoreleasepool
         {
             self.onData = dataCallback;
@@ -118,6 +110,19 @@ bool pinInputs[19] = {true,true,true,true,true,true,true,true,true,true,true,tru
     }
     
     return self;
+}
+
+- (void) reset
+{
+    self.connecting = NO;
+    self.connected = NO;
+    self.foundMicroBit = NO;
+    self.poweredOn = NO;
+    self.prevButtonA = 3;
+    self.prevButtonB = 3;
+    self.hasSetNotifyIOData = NO;
+    self.hasWrittenIOConfig = NO;
+    self.hasWrittenADConfig = NO;
 }
 
 - (void) cleanUp
@@ -204,7 +209,7 @@ bool pinInputs[19] = {true,true,true,true,true,true,true,true,true,true,true,tru
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)aPeripheral error:(NSError *)error
 {
     std::cout << "didDisconnectPeripheral" << std::endl;
-    self.connected = NO;
+    [self reset];
     if(self.peripheral )
     {
         [aPeripheral setDelegate:nil];
