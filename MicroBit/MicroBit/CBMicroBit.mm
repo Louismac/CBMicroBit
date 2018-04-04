@@ -24,7 +24,7 @@
 #include <iostream>
 #include "oscpkt.hh"
 #include "udp.hh"
-//#define WEKA
+//#define WEKINATOR
 
 using namespace oscpkt;
 
@@ -41,31 +41,52 @@ impl(new BLEImpl)
         std::string service = [data[0] UTF8String];
         if(service == "accelerometer")
         {
-            int accData[3] = {[data[1] intValue],[data[2] intValue],[data[3] intValue]};
+            int accData[3] = {[data[1] intValue], [data[2] intValue], [data[3] intValue]};
+#ifndef WEKINATOR
             if(osc) {
                 sendAccData(accData);
             }
+#endif
+            aggData[0] = accData[0];
+            aggData[1] = accData[1];
+            aggData[2] = accData[2];
+#ifdef WEKINATOR
+            if(osc) {
+                sendWekinatorData();
+            }
+#endif
         }
         else if (service == "buttonA")
         {
+            int state = [data[1] intValue];
+#ifndef WEKINATOR
             if(osc) {
-                int state = [data[1] intValue];
                 sendButtonData(true, state);
             }
+#endif
+            aggData[3] = state;
         }
         else if (service == "buttonB")
         {
+            int state = [data[1] intValue];
+#ifndef WEKINATOR
             if(osc) {
-                int state = [data[1] intValue];
                 sendButtonData(false, state);
             }
+#endif
+            aggData[4] = state;
         }
         else if (service == "pins")
         {
+            int pinData[3] = {[data[1] intValue], [data[2] intValue], [data[3] intValue]};
+#ifndef WEKINATOR
             if(osc) {
-                int pinData[3] = {[data[1] intValue],[data[2] intValue],[data[3] intValue]};
                 sendPinData(pinData);
             }
+#endif
+            aggData[5] = pinData[0];
+            aggData[6] = pinData[1];
+            aggData[7] = pinData[2];
         }
     } discoveryCallBack:^{
         std::cout << "did Find Micro:bit" << std::endl;
@@ -80,6 +101,25 @@ CBMicroBit::~CBMicroBit()
     if (impl)
         [impl->wrapped cleanUp];
     delete impl;
+}
+
+void CBMicroBit::sendWekinatorData()
+{
+    UdpSocket sock;
+    sock.connectTo("localhost", sendPort);
+    Message msg("/wek/inputs");
+    for(int i = 0; i < 8; i++)
+    {
+        msg.pushFloat((float)aggData[i]);
+    }
+    PacketWriter pw;
+    pw.startBundle().startBundle().addMessage(msg).endBundle().endBundle();
+    bool ok = sock.sendPacket(pw.packetData(), pw.packetSize());
+    if(!ok)
+    {
+        std::cout << "osc failed to send" << std::endl;
+    }
+    sock.close();
 }
 
 void CBMicroBit::sendButtonData(bool buttonA, int state)
@@ -102,20 +142,10 @@ void CBMicroBit::sendPinData(int data[3])
 {
     UdpSocket sock;
     sock.connectTo("localhost", sendPort);
-#ifdef WEKA
-    Message msg("/wek/inputs");
-    msg.pushFloat((float)data[0]);
-    msg.pushFloat((float)data[1]);
-    msg.pushFloat((float)data[2]);
-    msg.pushFloat((float)data[0]);
-    msg.pushFloat((float)data[1]);
-    msg.pushFloat((float)data[2]);
-#else
     Message msg("/pins");
     msg.pushDouble((double)data[0]);
     msg.pushDouble((double)data[1]);
     msg.pushDouble((double)data[2]);
-#endif
     PacketWriter pw;
     pw.startBundle().startBundle().addMessage(msg).endBundle().endBundle();
     bool ok = sock.sendPacket(pw.packetData(), pw.packetSize());

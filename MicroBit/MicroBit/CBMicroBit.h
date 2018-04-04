@@ -31,7 +31,9 @@ public:
     BLEImpl* impl;
 private:
     int sendPort;
+    int aggData[8];
     void sendAccData(int data[3]);
     void sendButtonData(bool buttonA, int state);
     void sendPinData(int data[3]);
+    void sendWekinatorData();
 };
