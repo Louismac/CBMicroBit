@@ -77,7 +77,7 @@
 
 @implementation CBMicroBitBridge
 
-bool pinInputs[19] = {true,true,true,true,true,true,true,true,true,true,true,true,true,true,true};
+bool pinInputs[19] = {true,true,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
 
 - (instancetype) initWithDataCallback:(BLEArrayBlock) dataCallback
                     discoveryCallBack:(BLEBlock) discoveryCallback

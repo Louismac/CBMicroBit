@@ -133,9 +133,9 @@ void CBMicroBit::sendPinData(int data[3])
     UdpSocket sock;
     sock.connectTo("localhost", sendPort);
     Message msg("/pins");
-    msg.pushDouble((double)data[0]);
-    msg.pushDouble((double)data[1]);
-    msg.pushDouble((double)data[2]);
+    msg.pushInt32(data[0]);
+    msg.pushInt32(data[1]);
+    msg.pushInt32(data[2]);
     PacketWriter pw;
     pw.startBundle().startBundle().addMessage(msg).endBundle().endBundle();
     bool ok = sock.sendPacket(pw.packetData(), pw.packetSize());
