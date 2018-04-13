@@ -23,7 +23,7 @@ Important changes to remember to make to the MicrobitConfig.h file (/microbit-sa
 
 ## OSC Output
 
-The program outputs to localhost:9109 by default. The output port can be set using the first argument of the program
+The program outputs to localhost:57120 by default. The output port can be set using the first argument of the program
 
 Either edit the scheme in XCode
 ```
