@@ -17,7 +17,7 @@ Alternatively, run the unix execitable CBMicroBit
 from the terminal. Or by double clicking on it.
 
 ## The Micro:Bit
-We've included a hex file (CBMicrobit.hex) that can just be dragged onto the MicroBit. All it does it advertise the accelerometer, button, thermometer, LED and IO Pin services. 
+We've included two hex files that can just be dragged onto the MicroBit (CBMicrobit.hex and CBMicrobitCombinedSensors.hex, if your Micro:Bit is a newer version ~ after Oct 2018, then it may have a combined IMU sensor, instread of separate accelermeoter, compass etc..., in which case, use the latter) . All it does it advertise the accelerometer, button, thermometer, LED and IO Pin services. 
 
 Important changes to remember to make to the MicrobitConfig.h file (/microbit-samples/yotta_modules/microbit-dal/inc/core/MicroBitConfig.h) if you are building your own /hex file is setting MICROBIT_BLE_OPEN to 1 (this disables pairing) and MICROBIT_SD_GATT_TABLE_SIZE to its maximum, which is  0x700. If this is not done then the services will not appear. 
 
